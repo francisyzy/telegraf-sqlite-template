@@ -16,6 +16,14 @@ if (process.env.NODE_ENV === "production") {
   bot.startWebhook(`/bot${API_TOKEN}`, null, PORT);
   //Production Logging
   if (LOG_GROUPID) {
+    bot.use((ctx) => {
+      if (ctx.message) {
+        const message = `name: [${ctx.message.from.first_name}](tg://user?id=${ctx.message.from.id}) \\(@${ctx.message.from.username}\\)\ntext: ${ctx.message.text}`;
+        bot.telegram.sendMessage(process.env.LOG_GROUPID, message, {
+          parse_mode: "MarkdownV2",
+        });
+      }
+    });
   }
 } else {
   //Development logging
