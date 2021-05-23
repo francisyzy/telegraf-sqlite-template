@@ -1,4 +1,4 @@
-const { Telegraf } = require("telegraf");
+require("dotenv").config();
 
 const API_TOKEN = process.env.API_TOKEN;
 const PORT = process.env.PORT || 3000;
