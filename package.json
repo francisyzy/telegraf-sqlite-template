@@ -4,12 +4,12 @@
   "description": "Template for creating future telegram bot apps",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node src/index.js",
     "build": "npm run generate && npm run deploy",
     "generate": "prisma generate",
     "deploy": "prisma migrate deploy",
     "migrate": "prisma migrate dev",
-    "dev": "nodemon index.js"
+    "dev": "nodemon src/index.js"
   },
   "repository": {
     "type": "git",
