@@ -1,4 +1,4 @@
-const bot = require("../lib/bot");
+import bot from "../lib/bot";
 
 //General helper commands
 const helper = () => {
@@ -6,4 +6,4 @@ const helper = () => {
   bot.help((ctx) => ctx.reply("Help message"));
 };
 
-module.exports = helper;
+export default helper;

@@ -1,6 +1,6 @@
-const { Markup } = require("telegraf");
+import { Markup } from "telegraf";
 
-const bot = require("../lib/bot");
+import bot from "../lib/bot";
 
 const keyboard = Markup.inlineKeyboard([
   Markup.button.url("❤️", "http://telegraf.js.org"),
@@ -22,4 +22,4 @@ const echo = () => {
   bot.action("delete", (ctx) => ctx.deleteMessage());
 };
 
-module.exports = echo;
+export default echo;
