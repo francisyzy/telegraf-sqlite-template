@@ -7,6 +7,7 @@ export function toEscapeMsg(str: string): string {
   return str
     .replace(/_/gi, "\\_")
     .replace(/-/gi, "\\-")
+    .replace("+", "\\+")
     .replace("=", "\\=")
     .replace("~", "\\~")
     .replace(/\(/g, "\\(")

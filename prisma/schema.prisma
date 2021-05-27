@@ -11,7 +11,7 @@ generator client {
 }
 
 model User {
-  telegramId   String @id
-  phone_number String
+  telegramId   Int @id
+  phone_number String?
   name         String
 }
