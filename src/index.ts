@@ -7,6 +7,8 @@ import bot from "./lib/bot";
 import helper from "./commands/helper";
 import echo from "./commands/echo";
 
+import { toEscapeMsg } from "./utils/messageHandler";
+
 //Production Settings
 if (process.env.NODE_ENV === "production") {
   //Webhooks
@@ -14,12 +16,17 @@ if (process.env.NODE_ENV === "production") {
   //Production Logging
   bot.use((ctx, next) => {
     if (ctx.message && config.LOG_GROUPID) {
-      const message = `name: [${
-        ctx.message.from.first_name
-      }](tg://user?id=${ctx.message.from.id}) \\(@${
-        ctx.message.from.username
-      }\\)\ntext: ${(ctx.message as Message.TextMessage).text}`;
-      bot.telegram.sendMessage(config.LOG_GROUPID, message, {
+      let userInfo: string;
+      if (ctx.message.from.username) {
+        userInfo = `name: [${ctx.message.from.first_name}](tg://user?id=${ctx.message.from.id}) \\(@${ctx.message.from.username}\\)`;
+      } else {
+        userInfo = `name: [${ctx.message.from.first_name}](tg://user?id=${ctx.message.from.id})`;
+      }
+      const text = `\ntext: ${
+        (ctx.message as Message.TextMessage).text
+      }`;
+      const logMessage = userInfo + toEscapeMsg(text);
+      bot.telegram.sendMessage(config.LOG_GROUPID, logMessage, {
         parse_mode: "MarkdownV2",
       });
     }
