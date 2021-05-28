@@ -58,7 +58,10 @@ const helper = () => {
   bot.command("inline", (ctx) => {});
   bot.action("YES✔️", (ctx) => {
     return ctx.editMessageText(
-      `Great! your name is set as ${ctx.callbackQuery.from.first_name}`,
+      `Great\\! Your name is set as __${ctx.callbackQuery.from.first_name}__`,
+      {
+        parse_mode: "MarkdownV2",
+      },
     );
   });
 
@@ -83,7 +86,12 @@ const helper = () => {
       },
     });
     ctx.scene.leave();
-    ctx.reply("Done");
+    ctx.reply(
+      `Great\\! Your name is now set as __${ctx.message.text}__`,
+      {
+        parse_mode: "MarkdownV2",
+      },
+    );
   });
   updateNameScene.on("message", (ctx) =>
     ctx.reply("Only text messages please"),
