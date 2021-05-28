@@ -10,7 +10,7 @@ const helper = () => {
   bot.start(async (ctx) => {
     await prisma.user.upsert({
       where: { telegramId: ctx.from.id },
-      update: {},
+      update: { name: ctx.from.first_name },
       create: {
         telegramId: ctx.from.id,
         name: ctx.from.first_name,
