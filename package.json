@@ -2,14 +2,15 @@
   "name": "telegraf-postgresql-template",
   "version": "0.1.0",
   "description": "Template for creating future telegram bot apps",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
     "build": "npm run generate && npm run deploy && tsc -p .",
+    "dev": "nodemon src/index.ts",
     "generate": "prisma generate",
     "deploy": "prisma migrate deploy",
     "migrate": "prisma migrate dev",
-    "dev": "nodemon src/index.ts"
+    "reset": "prisma migrate reset"
   },
   "repository": {
     "type": "git",
