@@ -8,6 +8,17 @@ const prisma = new PrismaClient();
 const helper = () => {
   //Start Command to request user phone number
   bot.start(async (ctx) => {
+    ctx.setMyCommands([
+      {
+        command: "start",
+        description: "Set/Change your name",
+      },
+      {
+        command: "account",
+        description: "Get account information of user",
+      },
+    ]);
+
     await prisma.user.upsert({
       where: { telegramId: ctx.from.id },
       update: { name: ctx.from.first_name },
