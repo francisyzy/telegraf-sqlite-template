@@ -115,14 +115,18 @@ const helper = () => {
     const user = await prisma.user.findUnique({
       where: { telegramId: ctx.from.id },
     });
-    return ctx.reply(
-      toEscapeMsg(
-        `*Name*: ${user?.name} \n*PhoneNo.*: ${user?.phone_number}`,
-      ),
-      {
-        parse_mode: "MarkdownV2",
-      },
-    );
+    if (user) {
+      return ctx.reply(
+        toEscapeMsg(
+          `*Name*: ${user.name} \n*PhoneNo.*: ${user.phone_number}`,
+        ),
+        {
+          parse_mode: "MarkdownV2",
+        },
+      );
+    } else {
+      return ctx.reply("Please /start to create an account");
+    }
   });
   bot.help((ctx) => ctx.reply("Help message"));
 };
