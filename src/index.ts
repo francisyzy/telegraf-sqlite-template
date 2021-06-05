@@ -11,8 +11,6 @@ import { toEscapeMsg } from "./utils/messageHandler";
 
 //Production Settings
 if (process.env.NODE_ENV === "production") {
-  //Webhooks
-  bot.telegram.setWebhook(`${config.URL}/bot${config.API_TOKEN}`);
   //Production Logging
   bot.use((ctx, next) => {
     if (ctx.message && config.LOG_GROUPID) {
