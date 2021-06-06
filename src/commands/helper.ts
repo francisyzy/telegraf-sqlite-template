@@ -2,22 +2,14 @@ import bot from "../lib/bot";
 import { PrismaClient } from "@prisma/client";
 import { toEscapeMsg } from "../utils/messageHandler";
 import { Scenes, session, Markup } from "telegraf";
+import { getBotCommands } from "../utils/botCommands";
 
 const prisma = new PrismaClient();
 //General helper commands
 const helper = () => {
   //Start Command to request user phone number
   bot.start(async (ctx) => {
-    ctx.setMyCommands([
-      {
-        command: "start",
-        description: "Set/Change your name",
-      },
-      {
-        command: "account",
-        description: "Get account information of user",
-      },
-    ]);
+    ctx.setMyCommands(getBotCommands());
 
     await prisma.user.upsert({
       where: { telegramId: ctx.from.id },
@@ -66,7 +58,6 @@ const helper = () => {
       ]),
     });
   });
-  bot.command("inline", (ctx) => {});
   bot.action("YES✔️", (ctx) => {
     return ctx.editMessageText(
       `Great\\! Your name is set as __${ctx.callbackQuery.from.first_name}__`,
