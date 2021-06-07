@@ -1,38 +1,14 @@
 import bot from "../lib/bot";
 import { PrismaClient } from "@prisma/client";
 import { toEscapeMsg } from "../utils/messageHandler";
-import { Scenes, session, Markup } from "telegraf";
+import { Scenes, session, Markup, Composer } from "telegraf";
 import { getBotCommands } from "../utils/botCommands";
 
 const prisma = new PrismaClient();
 //General helper commands
 const helper = () => {
-  //Start Command to request user phone number
-  bot.start(async (ctx) => {
-    ctx.setMyCommands(getBotCommands());
-
-    await prisma.user.upsert({
-      where: { telegramId: ctx.from.id },
-      update: { name: ctx.from.first_name },
-      create: {
-        telegramId: ctx.from.id,
-        name: ctx.from.first_name,
-      },
-    });
-    ctx.reply(
-      "Welcome to the template bot. Please register by providing your contact no.",
-      {
-        reply_markup: {
-          keyboard: [
-            [{ text: "📲 Send phone number", request_contact: true }],
-          ],
-          one_time_keyboard: true,
-        },
-      },
-    );
-  });
-  //Handle contact information
-  bot.on("contact", async (ctx) => {
+  const contactHandler = new Composer<Scenes.WizardContext>();
+  contactHandler.on("contact", async (ctx) => {
     const senderId = ctx.from.id;
     if (!senderId) return;
 
@@ -51,34 +27,48 @@ const helper = () => {
       },
     });
     //Check if the user's name is correct
-    return ctx.reply(`Your name is ${ctx.from.first_name}?`, {
+    await ctx.reply(`Your name is ${ctx.from.first_name}?`, {
       ...Markup.inlineKeyboard([
         Markup.button.callback("YES✔️", "YES✔️"),
         Markup.button.callback("NO❌", "NO❌"),
       ]),
     });
+    return ctx.wizard.next();
   });
-  bot.action("YES✔️", (ctx) => {
-    return ctx.editMessageText(
+  contactHandler.use((ctx) => ctx.reply("Please send your contact"));
+
+  const nameHandler = new Composer<Scenes.WizardContext>();
+  nameHandler.action("NO❌", async (ctx) => {
+    await ctx.editMessageText(
+      `Send me your name\n_/cancel to set as ${ctx.callbackQuery.from.first_name}_`,
+      {
+        parse_mode: "MarkdownV2",
+      },
+    );
+    return ctx.wizard.next();
+  });
+  nameHandler.action("YES✔️", async (ctx) => {
+    await ctx.editMessageText(
       `Great\\! Your name is set as __${ctx.callbackQuery.from.first_name}__`,
       {
         parse_mode: "MarkdownV2",
       },
     );
+    return await ctx.scene.leave();
   });
+  nameHandler.use((ctx) => ctx.reply("Please select yes or no"));
 
-  //Scene to update name
-  // Handler factories
-  const { enter, leave } = Scenes.Stage;
-
-  const updateNameScene = new Scenes.BaseScene<Scenes.SceneContext>(
-    "updateName",
-  );
-  updateNameScene.enter((ctx) =>
-    ctx.reply("Update your name /back to cancel"),
-  );
-  updateNameScene.command("back", leave<Scenes.SceneContext>());
-  updateNameScene.on("text", async (ctx) => {
+  const renameHandler = new Composer<Scenes.WizardContext>();
+  renameHandler.command("/cancel", async (ctx) => {
+    await ctx.reply(
+      `Great\\! Your name is set as __${ctx.from.first_name}__`,
+      {
+        parse_mode: "MarkdownV2",
+      },
+    );
+    return await ctx.scene.leave();
+  });
+  renameHandler.on("text", async (ctx) => {
     await prisma.user.upsert({
       where: { telegramId: ctx.from.id },
       update: { name: ctx.message.text },
@@ -87,30 +77,68 @@ const helper = () => {
         name: ctx.message.text,
       },
     });
-    ctx.scene.leave();
-    ctx.reply(
+    await ctx.reply(
       `Great\\! Your name is now set as __${ctx.message.text}__`,
       {
         parse_mode: "MarkdownV2",
       },
     );
+    return await ctx.scene.leave();
   });
-  updateNameScene.on("message", (ctx) =>
+  renameHandler.on("message", (ctx) =>
     ctx.reply("Only text messages please"),
   );
-  const stage = new Scenes.Stage<Scenes.SceneContext>(
-    [updateNameScene],
-    {
-      ttl: 10,
+
+  const startWizard = new Scenes.WizardScene<Scenes.WizardContext>(
+    "starterWizard",
+    async (ctx) => {
+      ctx.setMyCommands(getBotCommands());
+      if (ctx.from) {
+        await prisma.user.upsert({
+          where: { telegramId: ctx.from.id },
+          update: { name: ctx.from.first_name },
+          create: {
+            telegramId: ctx.from.id,
+            name: ctx.from.first_name,
+          },
+        });
+      }
+      if (ctx.message && ctx.message.chat.type === "private") {
+        await ctx.reply(
+          "Welcome to the template bot. Please register by providing your contact no.",
+          {
+            reply_markup: {
+              keyboard: [
+                [
+                  {
+                    text: "📲 Send phone number",
+                    request_contact: true,
+                  },
+                ],
+              ],
+              one_time_keyboard: true,
+            },
+          },
+        );
+        return ctx.wizard.next();
+      } else {
+        await ctx.reply("Please start the bot in a private chat");
+        return await ctx.scene.leave();
+      }
     },
+    contactHandler,
+    nameHandler,
+    renameHandler,
   );
+
+  const stage = new Scenes.Stage<Scenes.WizardContext>([startWizard]);
   bot.use(session());
   bot.use(stage.middleware());
 
-  //Calls the above scene
-  bot.action("NO❌", (ctx) => {
-    ctx.deleteMessage();
-    return ctx.scene.enter("updateName");
+  //All bots start with /start
+  bot.start((ctx) => {
+    ctx.setMyCommands(getBotCommands());
+    return ctx.scene.enter("starterWizard");
   });
 
   bot.command("account", async (ctx) => {
