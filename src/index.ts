@@ -16,9 +16,15 @@ if (process.env.NODE_ENV === "production") {
     if (ctx.message && config.LOG_GROUPID) {
       let userInfo: string;
       if (ctx.message.from.username) {
-        userInfo = `name: [${ctx.message.from.first_name}](tg://user?id=${ctx.message.from.id}) \\(@${ctx.message.from.username}\\)`;
+        userInfo = `name: [${toEscapeMsg(
+          ctx.message.from.first_name,
+        )}](tg://user?id=${ctx.message.from.id}) \\(@${toEscapeMsg(
+          ctx.message.from.username,
+        )}\\)`;
       } else {
-        userInfo = `name: [${ctx.message.from.first_name}](tg://user?id=${ctx.message.from.id})`;
+        userInfo = `name: [${toEscapeMsg(
+          ctx.message.from.first_name,
+        )}](tg://user?id=${ctx.message.from.id})`;
       }
       const text = `\ntext: ${
         (ctx.message as Message.TextMessage).text
