@@ -35,7 +35,7 @@ const helper = () => {
     });
     return ctx.wizard.next();
   });
-  contactHandler.use((ctx) => ctx.reply("Please send your contact"));
+  contactHandler.use((ctx) => ctx.reply("Please send your contact by clicking the button on the keyboard"));
 
   const nameHandler = new Composer<Scenes.WizardContext>();
   nameHandler.action("NO❌", async (ctx) => {
@@ -105,7 +105,7 @@ const helper = () => {
       }
       if (ctx.message && ctx.message.chat.type === "private") {
         await ctx.reply(
-          "Welcome to the template bot. Please register by providing your contact no.",
+          "Welcome to the template bot. Please register by providing your contact",
           {
             reply_markup: {
               keyboard: [
