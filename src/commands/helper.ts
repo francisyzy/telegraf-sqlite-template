@@ -15,7 +15,19 @@ const helper = () => {
     // Checks if sender is impersonating someone else
     const { user_id, phone_number } = ctx.message.contact;
     if (senderId !== user_id) {
-      return ctx.reply("Please send your own contact");
+      return ctx.reply("Please send your own contact", {
+        reply_markup: {
+          keyboard: [
+            [
+              {
+                text: "📲 Send phone number",
+                request_contact: true,
+              },
+            ],
+          ],
+          one_time_keyboard: true,
+        },
+      });
     }
     await prisma.user.upsert({
       where: { telegramId: senderId },
@@ -26,6 +38,7 @@ const helper = () => {
         name: ctx.from.first_name,
       },
     });
+    await ctx.reply("Thanks!", { ...Markup.removeKeyboard() });
     //Check if the user's name is correct
     await ctx.reply(`Your name is ${ctx.from.first_name}?`, {
       ...Markup.inlineKeyboard([
@@ -35,7 +48,11 @@ const helper = () => {
     });
     return ctx.wizard.next();
   });
-  contactHandler.use((ctx) => ctx.reply("Please send your contact by clicking the button on the keyboard"));
+  contactHandler.use((ctx) =>
+    ctx.reply(
+      "Please send your contact by clicking the button on the keyboard",
+    ),
+  );
 
   const nameHandler = new Composer<Scenes.WizardContext>();
   nameHandler.action("NO❌", async (ctx) => {
@@ -60,11 +77,8 @@ const helper = () => {
 
   const renameHandler = new Composer<Scenes.WizardContext>();
   renameHandler.command("/cancel", async (ctx) => {
-    await ctx.reply(
+    await ctx.replyWithMarkdownV2(
       `Great\\! Your name is set as __${ctx.from.first_name}__`,
-      {
-        parse_mode: "MarkdownV2",
-      },
     );
     return await ctx.scene.leave();
   });
@@ -77,11 +91,8 @@ const helper = () => {
         name: ctx.message.text,
       },
     });
-    await ctx.reply(
+    await ctx.replyWithMarkdownV2(
       `Great\\! Your name is now set as __${ctx.message.text}__`,
-      {
-        parse_mode: "MarkdownV2",
-      },
     );
     return await ctx.scene.leave();
   });
@@ -105,7 +116,7 @@ const helper = () => {
       }
       if (ctx.message && ctx.message.chat.type === "private") {
         await ctx.reply(
-          "Welcome to the template bot. Please register by providing your contact",
+          "Welcome to the template bot. Please register by providing your contact by pressing the keyboard button",
           {
             reply_markup: {
               keyboard: [
@@ -146,13 +157,10 @@ const helper = () => {
       where: { telegramId: ctx.from.id },
     });
     if (user) {
-      return ctx.reply(
+      return ctx.replyWithMarkdownV2(
         toEscapeMsg(
           `*Name*: ${user.name} \n*PhoneNo.*: ${user.phone_number}`,
         ),
-        {
-          parse_mode: "MarkdownV2",
-        },
       );
     } else {
       return ctx.reply("Please /start to create an account");
