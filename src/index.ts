@@ -7,7 +7,7 @@ import bot from "./lib/bot";
 import helper from "./commands/helper";
 import echo from "./commands/echo";
 
-import { toEscapeMsg } from "./utils/messageHandler";
+import { toEscapeHTMLMsg } from "./utils/messageHandler";
 
 //Production Settings
 if (process.env.NODE_ENV === "production") {
@@ -16,22 +16,22 @@ if (process.env.NODE_ENV === "production") {
     if (ctx.message && config.LOG_GROUPID) {
       let userInfo: string;
       if (ctx.message.from.username) {
-        userInfo = `name: [${toEscapeMsg(
-          ctx.message.from.first_name,
-        )}](tg://user?id=${ctx.message.from.id}) \\(@${toEscapeMsg(
-          ctx.message.from.username,
-        )}\\)`;
+        userInfo = `name: <a href="tg://user?id=${
+          ctx.message.from.id
+        }">${toEscapeHTMLMsg(ctx.message.from.first_name)}</a> (@${
+          ctx.message.from.username
+        })`;
       } else {
-        userInfo = `name: [${toEscapeMsg(
-          ctx.message.from.first_name,
-        )}](tg://user?id=${ctx.message.from.id})`;
+        userInfo = `name: <a href="tg://user?id=${
+          ctx.message.from.id
+        }">${toEscapeHTMLMsg(ctx.message.from.first_name)}</a>`;
       }
       const text = `\ntext: ${
         (ctx.message as Message.TextMessage).text
       }`;
-      const logMessage = userInfo + toEscapeMsg(text);
+      const logMessage = userInfo + toEscapeHTMLMsg(text);
       bot.telegram.sendMessage(config.LOG_GROUPID, logMessage, {
-        parse_mode: "MarkdownV2",
+        parse_mode: "HTML",
       });
     }
     return next();

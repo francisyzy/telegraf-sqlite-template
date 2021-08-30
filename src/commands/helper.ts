@@ -1,6 +1,6 @@
 import bot from "../lib/bot";
 import { PrismaClient } from "@prisma/client";
-import { toEscapeMsg } from "../utils/messageHandler";
+import { toEscapeHTMLMsg } from "../utils/messageHandler";
 import { Scenes, session, Markup, Composer } from "telegraf";
 import { getBotCommands } from "../utils/botCommands";
 
@@ -66,9 +66,9 @@ const helper = () => {
   });
   nameHandler.action("YES✔️", async (ctx) => {
     await ctx.editMessageText(
-      `Great\\! Your name is set as __${ctx.callbackQuery.from.first_name}__`,
+      `Great! Your name is set as <u>${ctx.callbackQuery.from.first_name}</u>\n/help to learn more about the bot`,
       {
-        parse_mode: "MarkdownV2",
+        parse_mode: "HTML",
       },
     );
     return await ctx.scene.leave();
@@ -77,8 +77,8 @@ const helper = () => {
 
   const renameHandler = new Composer<Scenes.WizardContext>();
   renameHandler.command("/cancel", async (ctx) => {
-    await ctx.replyWithMarkdownV2(
-      `Great\\! Your name is set as __${ctx.from.first_name}__`,
+    await ctx.replyWithHTML(
+      `Great! Your name is set as <u>${ctx.from.first_name}</u>\n/help to learn more about the bot`,
     );
     return await ctx.scene.leave();
   });
@@ -91,8 +91,8 @@ const helper = () => {
         name: ctx.message.text,
       },
     });
-    await ctx.replyWithMarkdownV2(
-      `Great\\! Your name is now set as __${ctx.message.text}__`,
+    await ctx.replyWithHTML(
+      `Great! Your name is now set as <u>${ctx.message.text}</u>\n/help to learn more about the bot`,
     );
     return await ctx.scene.leave();
   });
@@ -157,10 +157,10 @@ const helper = () => {
       where: { telegramId: ctx.from.id },
     });
     if (user) {
-      return ctx.replyWithMarkdownV2(
-        toEscapeMsg(
-          `*Name*: ${user.name} \n*PhoneNo.*: ${user.phone_number}`,
-        ),
+      return ctx.replyWithHTML(
+        `<b>Name</b>: ${toEscapeHTMLMsg(
+          user.name,
+        )} \n<b>PhoneNo.</b>: ${user.phone_number}`,
       );
     } else {
       return ctx.reply("Please /start to create an account");
