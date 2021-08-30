@@ -14,7 +14,7 @@ import catchAll from "./commands/catch-all";
 if (process.env.NODE_ENV === "production") {
   //Production Logging
   bot.use((ctx, next) => {
-    if (ctx.message && config.LOG_GROUPID) {
+    if (ctx.message && config.LOG_GROUP_ID) {
       let userInfo: string;
       if (ctx.message.from.username) {
         userInfo = `name: <a href="tg://user?id=${
@@ -31,7 +31,7 @@ if (process.env.NODE_ENV === "production") {
         (ctx.message as Message.TextMessage).text
       }`;
       const logMessage = userInfo + toEscapeHTMLMsg(text);
-      bot.telegram.sendMessage(config.LOG_GROUPID, logMessage, {
+      bot.telegram.sendMessage(config.LOG_GROUP_ID, logMessage, {
         parse_mode: "HTML",
       });
     }
