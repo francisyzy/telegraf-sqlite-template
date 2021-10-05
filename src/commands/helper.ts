@@ -49,8 +49,12 @@ const helper = () => {
     return ctx.wizard.next();
   });
   contactHandler.use((ctx) =>
-    ctx.reply(
-      "Please send your contact by clicking the button on the keyboard",
+    ctx.replyWithPhoto(
+      "https://user-images.githubusercontent.com/24467184/135873047-1f1636ad-d99c-466e-8044-4f3e72b4b4b7.JPG",
+      {
+        caption:
+          "Please send your contact by clicking the button on the keyboard",
+      },
     ),
   );
 
