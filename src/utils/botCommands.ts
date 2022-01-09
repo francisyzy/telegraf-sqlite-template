@@ -4,7 +4,8 @@ import { BotCommand } from "typegram";
  * @return {BotCommand[]} List of admin commands
  */
 export function getBotCommands(): BotCommand[] {
-  const BotCommand: BotCommand[] = [
+  // Update this list of commands
+  const rawBotCommands = [
     {
       command: "start",
       description: "Set/Change your name",
@@ -13,6 +14,18 @@ export function getBotCommands(): BotCommand[] {
       command: "account",
       description: "Get account information of user",
     },
+    {
+      command: "help",
+      description: "Find out more on the bot",
+    },
   ];
-  return BotCommand;
+
+  let botCommands: BotCommand[] = [];
+  rawBotCommands.forEach((botCommand) => {
+    botCommands.push({
+      command: botCommand.command.toLowerCase(),
+      description: botCommand.description.substring(0, 256),
+    });
+  });
+  return botCommands;
 }
