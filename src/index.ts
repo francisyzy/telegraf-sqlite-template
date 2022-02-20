@@ -3,11 +3,12 @@ import { Telegraf } from "telegraf";
 
 import config from "./config";
 
+import { toEscapeHTMLMsg } from "./utils/messageHandler";
+import { printBotInfo } from "./utils/consolePrintUsername";
+
 import bot from "./lib/bot";
 import helper from "./commands/helper";
 import echo from "./commands/echo";
-
-import { toEscapeHTMLMsg } from "./utils/messageHandler";
 import catchAll from "./commands/catch-all";
 
 //Production Settings
@@ -47,6 +48,7 @@ if (process.env.NODE_ENV === "production") {
   //Development logging
   bot.use(Telegraf.log());
   bot.launch();
+  printBotInfo(bot);
 }
 
 helper();
