@@ -33,6 +33,7 @@ This bot uses a local database so that you do not have to use a database service
 
 ### Production
 
+<strike>
 We run the bot on a [heroku](https://heroku.com/) dyno for [free](https://www.heroku.com/pricing) as it also provides [free](https://devcenter.heroku.com/articles/heroku-postgres-plans#hobby-tier) [PostgreSQL](https://devcenter.heroku.com/articles/heroku-postgresql) dB.
 
 _Downside of heroku will be how the app will go to sleep if nobody is using, takes <30s for a telegram bot to boot up once someone sends a message to the bot_
@@ -44,6 +45,8 @@ _Downside of heroku will be how the app will go to sleep if nobody is using, tak
 `npm run start` to start the compiled code
 
 This two commands will be ran automatically by heroku once it receives the code
+</strike>
+I just run my bots on a linux box somewhere now. Heroku has no more free tier.
 
 ## Resources
 
@@ -67,6 +70,7 @@ The Quickstart is based on a preconfigured SQLite database. You can also get sta
 - [Add Prisma to an existing project](https://www.prisma.io/docs/getting-started/setup-prisma/add-to-existing-project-typescript-postgres)
 - [Setup a new project with Prisma from scratch](https://www.prisma.io/docs/getting-started/setup-prisma/start-from-scratch-typescript-postgres)
 
+<strike>
 ### Heroku
 
 - [Heroku plans and pricing](https://www.heroku.com/pricing)
@@ -74,6 +78,7 @@ The Quickstart is based on a preconfigured SQLite database. You can also get sta
 - [Heroku Command Line Tools (CLI)](https://devcenter.heroku.com/articles/heroku-cli)
 - [Get Heroku Logs (1500 lines max)](https://devcenter.heroku.com/articles/logging#log-retrieval-via-cli)
 - [Heroku Config Vars (`.env`)](https://devcenter.heroku.com/articles/config-vars#using-the-heroku-dashboard)
+</strike>
 
 ## Built with
 
