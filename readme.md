@@ -20,9 +20,8 @@ The main engine the bot runs on is nodeJS. There is a [Youtube Video](https://ww
 
 #### Database
 
-As this bot has a database to read and write information into, you need to set up either a local development database or use your production database for your development work. The latter is not recommended in-case you wipe your production database and cause the bot to lose all memory.
+This bot uses a local database so that you do not have to use a database service. The .db files will keep updating so it will keep updating at the repo side
 
-[PostgreSQL Download](https://www.postgresql.org/download/)
 
 ### Developing
 

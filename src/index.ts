@@ -11,22 +11,29 @@ import helper from "./commands/helper";
 import echo from "./commands/echo";
 import catchAll from "./commands/catch-all";
 
-//Production Settings
-if (process.env.NODE_ENV === "production") {
-  //Production Logging
+const index = () => {
+  bot.use(Telegraf.log());
   bot.use((ctx, next) => {
-    if (ctx.message &&
+    if (
+      ctx.message &&
       config.LOG_GROUP_ID &&
       ctx.message.from.username != config.OWNER_USERNAME
     ) {
-      let userInfo = `name: <a href="tg://user?id=${ctx.message.from.id
-        }">${toEscapeHTMLMsg(ctx.message.from.first_name)}</a>`;
+      let userInfo: string;
       if (ctx.message.from.username) {
-        userInfo += ` (@${ctx.message.from.username
-          })`;
+        userInfo = `name: <a href="tg://user?id=${
+          ctx.message.from.id
+        }">${toEscapeHTMLMsg(ctx.message.from.first_name)}</a> (@${
+          ctx.message.from.username
+        })`;
+      } else {
+        userInfo = `name: <a href="tg://user?id=${
+          ctx.message.from.id
+        }">${toEscapeHTMLMsg(ctx.message.from.first_name)}</a>`;
       }
-      const text = `\ntext: ${(ctx.message as Message.TextMessage).text
-        }`;
+      const text = `\ntext: ${
+        (ctx.message as Message.TextMessage).text
+      }`;
       const logMessage = userInfo + toEscapeHTMLMsg(text);
       bot.telegram.sendMessage(config.LOG_GROUP_ID, logMessage, {
         parse_mode: "HTML",
@@ -34,24 +41,17 @@ if (process.env.NODE_ENV === "production") {
     }
     return next();
   });
-  bot.launch({
-    webhook: {
-      domain: config.URL,
-      port: Number(config.PORT),
-    },
-  });
-} else {
-  //Development logging
-  bot.use(Telegraf.log());
   bot.launch();
   printBotInfo(bot);
-}
 
-helper();
-echo();
+  helper();
+  echo();
 
-//Catch all unknown messages/commands
-catchAll();
+  //Catch all unknown messages/commands
+  catchAll();
+};
+
+index();
 
 // Enable graceful stop
 process.once("SIGINT", () => bot.stop("SIGINT"));
