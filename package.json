@@ -1,5 +1,5 @@
 {
-  "name": "telegraf-postgresql-template",
+  "name": "telegraf-sqlite-template",
   "version": "0.1.1",
   "description": "Template for creating future telegram bot apps",
   "main": "dist/index.js",
@@ -14,13 +14,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/francisyzy/telegraf-PostgreSQL-template.git"
+    "url": "git+https://github.com/francisyzy/telegraf-sqlite-template.git"
   },
   "author": "francisyzy",
   "bugs": {
-    "url": "https://github.com/francisyzy/telegraf-PostgreSQL-template/issues"
+    "url": "https://github.com/francisyzy/telegraf-sqlite-template/issues"
   },
-  "homepage": "https://github.com/francisyzy/telegraf-PostgreSQL-template#readme",
+  "homepage": "https://github.com/francisyzy/telegraf-sqlite-template#readme",
   "engines": {
     "node": "18.x"
   },
