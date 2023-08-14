@@ -11,7 +11,7 @@ generator client {
 }
 
 model User {
-  telegramId   Int      @id
+  telegramId   BigInt   @id
   phone_number String?
   name         String
   createdAt    DateTime @default(now())
